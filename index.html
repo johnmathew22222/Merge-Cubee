@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge Cube</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary: #94a7db;
+            --secondary: #385b6b;
+            --dark: #263238;
+            --light: #f5f7fa;
+            --white: #ffffff;
+            --gray: #b0bec5;
+            --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --radius: 10px;
+            --transition: all 0.3s ease;
+            --heading-font: 'Poppins', sans-serif;
+            --accent: #00e5ff;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--body-font);
+            line-height: 1.6;
+            color: var(--dark);
+            padding-top: 70px;
+            background-color: var(--light);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Navigation */
+        .top-nav { 
+        background-color: rgba(18, 18, 18, 0.85); 
+        backdrop-filter: blur(10px); 
+        position: fixed; 
+        top: 0;
+        left: 0;
+        width: 100%; 
+        z-index: 1000; 
+        box-shadow: 0 0 20px rgba(0, 198, 255, 0.3);
+        padding: 12px 0; 
+        border-bottom: 1px solid rgba(0, 198, 255, 0.2);
+    } 
+    
+    .top-nav .container { 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+    } 
+    
+    .nav-brand { 
+        display: flex; 
+        align-items: center; 
+        gap: 12px; 
+        font-family: var(--heading-font); 
+        font-weight: 700; 
+        font-size: 1.5rem; 
+        color: var(--white);
+        text-decoration: none;
+    } 
+    
+    .nav-brand .logo { 
+        height: 40px; 
+        width: auto;
+        filter: drop-shadow(0 0 5px rgba(0, 198, 255, 0.5));
+        transition: filter 0.3s ease;
+    } 
+    
+    .nav-brand:hover .logo { 
+        filter: drop-shadow(0 0 8px rgba(0, 198, 255, 0.8));
+    } 
+    
+    .nav-brand span {
+        text-shadow: 0 0 10px rgba(0, 198, 255, 0.3);
+    }
+    
+    .nav-links { 
+        display: flex; 
+        align-items: center; 
+        gap: 1.5rem;
+    } 
+    
+    .nav-link { 
+        color: var(--white); /* Changed to white */
+        font-weight: 500; 
+        font-size: 1rem; 
+        display: flex; 
+        align-items: center; 
+        gap: 8px; 
+        position: relative; 
+        padding: 0.75rem 0; 
+        transition: var(--transition);
+        text-decoration: none; /* Ensures no underlines */
+    } 
+    
+    .dropdown-menu > a { 
+        display: flex; 
+        align-items: center; 
+        gap: 8px; 
+        color: var(--white); /* Changed to white */
+        font-weight: 600; 
+        padding: 0.75rem 0; 
+        position: relative;
+        text-decoration: none; /* Ensures no underlines */
+    } 
+    
+    /* Hover states */
+    .nav-link:hover { 
+        color: #719cf3;
+        text-decoration: none;
+    } 
+    
+    .dropdown-menu > a:hover {
+        color: #719cf3;
+        text-decoration: none;
+    } 
+    
+    .dropdown-menu {
+    position: relative; /* Ensure this is set to relative */
+    display: inline-block;
+}
+
+.dropdown-content { 
+    display: none; 
+    position: absolute; 
+    top: 100%; 
+    left: 0; /* This will now be relative to the dropdown-menu parent */
+    background: #f8faff; 
+    min-width: 240px; 
+    border-radius: var(--radius); 
+    padding: 1rem 0; 
+    z-index: 1001; 
+    box-shadow: var(--shadow-lg); 
+    opacity: 0; 
+    transform: translateY(10px); 
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Simplified transition */
+} 
+        
+        .dropdown-menu:hover .dropdown-content { 
+            display: block; 
+            opacity: 1; 
+            transform: translateY(0); 
+        } 
+        
+        .dropdown-content a { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            padding: 0.8rem 1.5rem; 
+            font-weight: 500; 
+            color: #263238; /* Darker text for better contrast on light background */ 
+            transition: var(--transition); 
+            text-decoration: none; /* Ensure no underlines */
+        } 
+        
+        .dropdown-content a:hover { 
+            background-color: #e6f7ff; /* Light blue hover state */ 
+            color: var(--primary); 
+            padding-left: 1.8rem; 
+            text-decoration: none; /* Ensure no underlines on hover */
+        } 
+        
+        .dropdown-content a i { 
+            font-size: 1rem; 
+            color: var(--secondary); 
+            width: 20px; 
+            text-align: center; 
+        }
+        
+        /* Hero section */
+        #hero {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('hero-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 8rem 0;
+            margin-top: 0;
+            position: relative;
+        }
+        
+        #hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(41, 98, 255, 0.8), rgba(0, 176, 255, 0.8));
+            opacity: 0.6;
+            z-index: 1;
+        }
+        
+        #hero .container {
+            position: relative;
+            z-index: 2;
+        }
+        
+        #hero h2 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        #hero p {
+            font-size: 1.4rem;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        /* Product sections */
+        .product-section {
+            padding: 6rem 0;
+        }
+        
+        .product-section h2 {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--primary);
+            font-size: 2.5rem;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .product-section h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--gradient);
+            border-radius: 2px;
+        }
+        
+        .alt-bg {
+            background-color: var(--white);
+        }
+        
+        .content-wrapper {
+            display: flex;
+            gap: 3rem;
+            margin-bottom: 3rem;
+            align-items: center;
+        }
+        
+        .text-content, .image-content {
+            flex: 1;
+        }
+        
+        .text-content p, .text-content ul, .text-content ol {
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+            color: var(--dark);
+            line-height: 1.8;
+        }
+        
+        .text-content ul, .text-content ol {
+            margin-left: 1.5rem;
+        }
+        
+        .text-content li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .image-content img {
+            width: 100%;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            transition: transform 0.3s ease;
+        }
+        
+        .image-content:hover img {
+            transform: scale(1.02);
+        }
+        
+        .caption {
+            text-align: center;
+            font-style: italic;
+            margin-top: 1rem;
+            color: var(--gray);
+        }
+        
+        /* Video container */
+        .video-container {
+            margin-top: 3rem;
+        }
+        
+        .video-container h3 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #1a237e;
+        }
+        
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Testimonials */
+        .testimonials {
+            margin-top: 3rem;
+        }
+        
+        .testimonials h3 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #1a237e;
+        }
+        
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .testimonial {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .testimonial p {
+            margin-bottom: 1rem;
+        }
+        
+        .testimonial .author {
+            font-weight: bold;
+            text-align: right;
+            color: #1a237e;
+        }
+        /* Footer */
+footer {
+    background-color: var(--dark);
+    color: var(--white);
+    padding: 80px 0 0;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 60px;
+    margin-bottom: 50px;
+}
+
+.footer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.footer-brand .logo {
+    height: 50px;
+    width: auto;
+}
+
+.footer-brand span {
+    font-family: var(--heading-font);
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: var(--white);
+}
+
+.footer-description {
+    color: var(--gray);
+    line-height: 1.7;
+}
+
+.footer-social {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.footer-social a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--white);
+    border-radius: 50%;
+    transition: var(--transition);
+}
+
+.footer-social a:hover {
+    background: var(--secondary);
+    transform: translateY(-3px);
+}
+
+.footer-links {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+}
+
+.link-group h4 {
+    color: var(--white);
+    margin-bottom: 25px;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.link-group h4 i {
+    color: var(--secondary);
+}
+
+.link-group ul li {
+    margin-bottom: 15px;
+    transition: var(--transition);
+}
+
+.link-group ul li:hover {
+    transform: translateX(5px);
+}
+
+.link-group a {
+    color: var(--gray);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: var(--transition);
+    text-decoration: none; /* Add this to ensure no underlines */
+}
+
+.link-group a:hover {
+    color: var(--secondary);
+    text-decoration: none; /* Add this to ensure no underlines on hover */
+}
+
+.link-group a i {
+    width: 20px;
+    text-align: center;
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 25px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.copyright {
+    color: var(--gray);
+    font-size: 0.95rem;
+    text-align: center;
+}
+
+.legal-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.legal-links a {
+    color: var(--gray);
+    font-size: 0.9rem;
+    transition: var(--transition);
+    text-decoration: none; /* Add this to ensure no underlines */
+}
+
+.legal-links a:hover {
+    color: var(--secondary);
+    text-decoration: none;
+}
+
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .content-wrapper {
+                flex-direction: column;
+            }
+            
+            header .container {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 1rem;
+            }
+            
+            nav ul li {
+                margin: 0 0.75rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <nav class="top-nav"> 
+        <div class="container"> 
+            <div class="nav-brand"> 
+                <a href="home.html"><img src="logo.png" alt="Trendy Logo" class="logo"></a> 
+                <span>TRENDY INFO</span> 
+            </div> 
+            <div class="nav-links"> 
+                <div class="dropdown-menu"> 
+                    <a href="#categories"><i class="fas fa-th-large"></i> Categories <i class="fas fa-chevron-down"></i></a> 
+                    <div class="dropdown-content"> 
+                        <a href="communication.html"><i class="fas fa-comments"></i> Communication</a> 
+                        <a href="security.html"><i class="fas fa-shield-alt"></i> Security</a> 
+                        <a href="health.html"><i class="fas fa-heartbeat"></i> Health</a> 
+                        <a href="entertainment.html"><i class="fas fa-film"></i> Entertainment</a> 
+                        <a href="transportation.html"><i class="fas fa-car"></i> Transportation</a> 
+                        <a href="education.html"><i class="fas fa-graduation-cap"></i> Education</a> 
+                    </div> 
+                </div> 
+                <a href="aboutus.html" class="nav-link"><i class="fas fa-info-circle"></i> About Us</a> 
+                <a href="#feedback" class="nav-link"><i class="fas fa-envelope"></i> Contact</a> 
+            </div> 
+        </div> 
+    </nav>
+
+    <section id="hero">
+        <div class="container">
+            <h2>Merge Cube</h2>
+            <p> Bringing Augmented Reality to Your Hands!</p>
+        </div>
+    </section>
+
+    <main>
+        <section id="what" class="product-section">
+            <div class="container">
+                <h2>Merge Cube</h2>
+                <div class="content-wrapper">
+                    <div class="text-content">
+                        <p>The Merge Cube is a foam cube embedded with unique patterns that, when viewed through a compatible device, transforms into interactive 3D objects and learning simulations. It serves as an innovative educational tool that brings AR experiences to life in the classroom.</p>
+                        <ul>
+                            <li><strong>Portability: </strong> Lightweight and easy to carry, making it suitable for various learning environments.</li>
+                            <li><strong>Interactivity: </strong>   Allows users to interact with virtual objects, enhancing engagement and understanding.</li>
+                            <li><strong>Versatility: </strong> Compatible with a range of educational apps covering subjects like science, math, and history. </li>
+                            <li><strong>Cost-Effective:</strong> Provides an affordable AR experience compared to traditional AR equipment.</li>
+                        </ul>
+                    </div>
+                    <div class="image-content">
+                        <img src="Logo merge.png" alt="Merge Cube">
+                        <p class="caption">From Static to Dynamic: Bringing Textbooks to Life.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="how" class="product-section alt-bg">
+            <div class="container">
+                <h2>How Does It Work?</h2>
+                <div class="content-wrapper">
+                    <div class="image-content">
+                        <img src="Merge Cube product.jpg" alt="Merge Cube">
+                        <p class="caption">Samsung S25 Ultra works by combining cutting-edge hardware with AI to deliver a smart, seamless experience.</p>
+                    </div>
+                    <div class="text-content">
+                        <p>The cube's unique patterns are recognized by the device's camera, triggering the AR experience.</p>
+                        <ol>
+                            <li><strong>Anatomy Exploration: </strong> Students can examine a 3D model of the human heart, rotating and dissecting it virtually.</li>
+                            <li><strong>Astronomy Lessons:  </strong> Explore the solar system by holding and interacting with planets and stars.</li>
+                            <li><strong>Historical Artifacts: </strong>  Handle virtual replicas of ancient artifacts, providing a tactile learning experience.</li>
+                        </ol>
+                        <p>Works seamlessly with Merge EDU apps, providing a platform for various interactive experiences.</p>
+                    </div>
+                </div>
+                <div class="video-container">
+                    <h3>See It In Action</h3>
+                    <div class="video-wrapper">
+                        <iframe width="100%" height="450" src="https://www.youtube.com/embed/aQ-yb4chHWk?si=tTWA7u5R4B0czFxh" title="Merge Cube" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="when" class="product-section">
+            <div class="container">
+                <h2>When Was It Introduced?</h2>
+                <div class="content-wrapper">
+                    <div class="text-content">
+                        <p>The Merge Cube was introduced in 2017 by Merge VR.  </p>
+                        <p>The development timeline included:</p>
+                        <ul>
+                            <li><strong>2017::</strong> Launch of Merge Cube, offering a new dimension to AR experiences. </li>
+                            <li><strong>2019:</strong> Integration with Merge EDU, expanding its educational applications.</li>
+                            <li><strong>2020:</strong>  Enhanced compatibility with various devices, increasing accessibility. </li>
+                        </ul>
+                        <p>These developments have broadened the scope of interactive learning, making AR more accessible and versatile in educational settings.</p>
+                    </div>
+                    <div class="image-content">
+                        <img src="Merge Cube.jpg" alt="Merge Cube">
+                        <p class="caption"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="where" class="product-section alt-bg">
+            <div class="container">
+                <h2>Where Is It Already Implemented?</h2>
+                <div class="content-wrapper">
+                    <div class="image-content">
+                        <img src="Merge Cubee.jpg" alt="Merge Cube">
+                        <p class="caption"></p>
+                    </div>
+                    <div class="text-content">
+                        <p>Merge Cube is utilized in educational institutions across the United States, United Kingdom, and the Philippines.</p>
+                        <ul>
+                            <li><strong>United States:</strong>Facilitates interactive STEM learning, enhancing student engagement</li>
+                            <li><strong>United Kingdom: </strong> Supports innovative teaching methods, integrating technology into the curriculum.</li>
+                            <li><strong>Philippines:</strong>  Provides access to advanced educational tools, bridging the digital divide.</li>
+                        </ul>
+                        <p></p>
+                    </div>
+                </div>
+                <div class="testimonials">
+                    <h3>Expert Opinions</h3>
+                    <div class="testimonial-grid">
+                        <div class="testimonial">
+                            <p> "A fun, cheap and oh-so cheerful six-sided stepping stone into the world of AR."</p>
+                            <p class="author">- TechRadar Review</p>
+                        </div>
+                        <div class="testimonial">
+                            <p> "The Merge Cube was really popular with our testers... children were amazed when they saw it come to life on the screen!"</p>
+                            <p class="author">- Good Play Guide</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img src="Trendy.png" alt="Trendy Logo" class="footer-logo">
+                    <span>TRENDY INFO</span>
+                    <p class="footer-description">Exploring the future through industry innovation.</p>
+                    <div class="footer-social">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <div class="link-group">
+                        <h4><i class="fas fa-industry"></i> Industries</h4>
+                        <ul>
+                            <li><a href="health.html"><i class="fas fa-heartbeat"></i> Health Tech</a></li>
+                            <li><a href="security.html"><i class="fas fa-shield-alt"></i> Cybersecurity</a></li>
+                            <li><a href="transportation.html"><i class="fas fa-car"></i> Transportation</a></li>
+                            <li><a href="communication.html"><i class="fas fa-comments"></i> Communication</a></li>
+                            <li><a href="education.html"><i class="fas fa-graduation-cap"></i> Education</a></li>
+                            <li><a href="entertainment.html"><i class="fas fa-film"></i> Entertainment</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="link-group">
+                        <h4><i class="fas fa-book"></i> Resources</h4>
+                        <ul>
+                            <li><a href="#"><i class="fas fa-file-alt"></i> Reports</a></li>
+                            <li><a href="#"><i class="fas fa-chart-line"></i> Market Data</a></li>
+                            <li><a href="#"><i class="fas fa-blog"></i> Blog</a></li>
+                            <li><a href="#"><i class="fas fa-newspaper"></i> News</a></li>
+                            <li><a href="#"><i class="fas fa-book-open"></i> Guides</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="link-group">
+                        <h4><i class="fas fa-building"></i> Company</h4>
+                        <ul>
+                            <li><a href="about.html"><i class="fas fa-users"></i> About</a></li>
+                            <li><a href="#"><i class="fas fa-briefcase"></i> Careers</a></li>
+                            <li><a href="#"><i class="fas fa-handshake"></i> Partners</a></li>
+                            <li><a href="#feedback"><i class="fas fa-envelope"></i> Contact</a></li>
+                            <li><a href="#"><i class="fas fa-question-circle"></i> FAQ</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="copyright">
+                    © 2025 Trendy Info. All rights reserved.
+                </div>
+                <div class="legal-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>    
+</body>
+</html>
+
+<style>
+    /* CSS Variables */
+    :root {
+        --primary: #00c6ff;
+        --secondary: #0072ff;
+        --accent: #7d00ff;
+        --dark: #121212;
+        --light: #f0f7ff;
+        --white: #ffffff;
+        --gray: #b0bec5;
+        --text-shadow: 0 0 10px rgba(0, 198, 255, 0.5);
+        --glow: 0 0 15px rgba(0, 198, 255, 0.7);
+        --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
+        --radius: 12px;
+        --transition: all 0.3s ease;
+        --heading-font: 'Poppins', sans-serif;
+        --body-font: 'Roboto', sans-serif;
+        --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+        --glass: rgba(255, 255, 255, 0.1);
+    }
+    
+    body {
+        font-family: var(--body-font);
+        line-height: 1.7;
+        color: var(--dark);
+        padding-top: 70px;
+        background-color: #f8faff;
+        font-size: 1.05rem;
+    }
+    
+    /* Improved text readability */
+    p, li {
+        font-size: 1.05rem;
+        letter-spacing: 0.3px;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+        font-family: var(--heading-font);
+        letter-spacing: 0.5px;
+    }
+    
+    /* Futuristic elements */
+    .futuristic-border {
+        position: relative;
+        border: 1px solid rgba(0, 198, 255, 0.3);
+        border-radius: var(--radius);
+        overflow: hidden;
+    }
+    
+    .futuristic-border::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 2px;
+        background: var(--gradient);
+        animation: border-flow 3s linear infinite;
+    }
+    
+    @keyframes border-flow {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+    
+    /* Glowing elements */
+    .glow-text {
+        text-shadow: var(--text-shadow);
+    }
+    
+    .glow-box {
+        box-shadow: var(--glow);
+    }
+</style>
